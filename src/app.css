@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+html {
+    background-color: black;
+}
+*,
+sl-button::part(base),
+sl-checkbox::part(base),
+sl-menu-item::part(base),
+sl-input::part(base) {
+    font-family: 'Righteous', system-ui;
+    letter-spacing: 1px;
+}
+
+sl-checkbox::part(control) {
+    border-radius: 50%;
+}
+
+.hidden-item {
+    opacity: 0;
+}
