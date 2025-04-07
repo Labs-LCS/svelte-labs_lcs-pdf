@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"devDependencies": {
-		"@eslint/compat": "^1.2.5",
+		"@eslint/compat": "^1.2.7",
 		"@eslint/js": "^9.18.0",
 		"@sveltejs/adapter-cloudflare": "^4.1.0",
 		"@sveltejs/adapter-static": "^0.0.17",
