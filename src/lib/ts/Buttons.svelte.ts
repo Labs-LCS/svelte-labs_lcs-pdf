@@ -209,8 +209,6 @@ export async function addMultipleCovers(e: { currentTarget: EventTarget & HTMLIn
 	const files = e.currentTarget.files;
 	const selectedItems = getSelected();
 	const iterations = Math.min(files?.length || 0, selectedItems?.length || 0);
-	// console.log(selectedItems)
-	// console.log(e.currentTarget.files[1])
 	if (files && selectedItems) {
 		for (let i = 0; i < iterations; i++) {
 			const file = files[i];
