@@ -43,7 +43,7 @@
     <p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
 
     <sl-animation bind:this={animation} name="tada" easing="easeIn">
-        <img bind:this={duck} src="/labs-logo.png" alt="Site's Logo" class="absolute h-60 inset-0 m-auto transition-all duration-400">
+        <img bind:this={duck} src="/labs-lcs.png" alt="Site's Logo" class="absolute h-60 inset-0 m-auto transition-all duration-400">
     </sl-animation>
     <sl-tooltip content="Test user">
         <sl-avatar bind:this={avatar} class="opacity-0">
