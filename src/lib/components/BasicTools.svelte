@@ -35,7 +35,7 @@
 	let { mergedPdfName = $bindable() }: { mergedPdfName: string } = $props();
 </script>
 
-<div class="flex flex-col items-center justify-center gap-3">
+<div class="add-pdf-button flex flex-col items-center justify-center gap-3">
 	<div class="flex flex-row gap-2">
 		<sl-button
 			bind:this={addPdfButton}
