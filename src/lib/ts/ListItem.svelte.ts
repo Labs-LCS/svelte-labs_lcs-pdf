@@ -1,16 +1,11 @@
 /* eslint-disable prefer-const */
-import {
-	coverObjects,
-	pdfObjects,
-	type CoverItemInterface,
-	type ListItemInterface
-} from './globals.svelte';
 import type { SlDrawer } from '@shoelace-style/shoelace';
 import { openDB } from 'idb';
 import { PDFDocument } from 'mupdf/mupdfjs';
-import { storeCover } from './db.svelte';
 import { getDocument } from 'pdfjs-dist';
+import { coverObjects, pdfObjects, storeCover } from './main_logic.svelte';
 import { renderPdf } from './render.svelte';
+import type { CoverItemInterface, ListItemInterface } from './interfaces.svelte';
 
 interface pdfObj {
 	buffer: ArrayBuffer;

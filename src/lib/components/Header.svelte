@@ -1,62 +1,116 @@
-
 <script lang="ts">
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
+	import { initializeApp } from 'firebase/app';
+	import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-    let header:HTMLElement,
-    labsName:HTMLParagraphElement,
-    animation:HTMLElement,
-    duck:HTMLImageElement,
-    avatar:HTMLElement
+	let { loggedIn = $bindable() } = $props();
 
-    onMount(() => {
-        setTimeout(() => {
-            animation.setAttribute('play', '');
-            
-            setTimeout(() => {
-                animation.removeAttribute('play');    
-            }, 1000);
+	let header: HTMLElement,
+		labsName: HTMLParagraphElement,
+		animation: HTMLElement,
+		duck: HTMLImageElement,
+		avatar: HTMLElement;
 
-            setTimeout(() => {
-                duck.classList.add('h-10');
-                duck.classList.remove('h-60');
-            }, 1200);
+	onMount(() => {
+		setTimeout(() => {
+			animation.setAttribute('play', '');
 
-            setTimeout(() => {
-                header.classList.add('h-16');
-                header.classList.remove('h-[100vh]');
-                avatar.classList.remove('opacity-0');
-                labsName.classList.remove('opacity-0');
-            }, 1500);
+			setTimeout(() => {
+				animation.removeAttribute('play');
+			}, 1000);
 
-            setTimeout(() => {
-                header.classList.remove('transition-all');
-                header.classList.remove('duration-700');
-                header.classList.remove('ease-in-out');
-            }, 2200);
-        }, 500);
-    });
+			setTimeout(() => {
+				duck.classList.add('h-10');
+				duck.classList.remove('h-60');
+			}, 1200);
 
+			setTimeout(() => {
+				header.classList.add('h-16');
+				header.classList.remove('h-[100vh]');
+				avatar.classList.remove('opacity-0');
+				labsName.classList.remove('opacity-0');
+			}, 1500);
+
+			setTimeout(() => {
+				header.classList.remove('transition-all');
+				header.classList.remove('duration-700');
+				header.classList.remove('ease-in-out');
+			}, 2200);
+		}, 500);
+	});
+
+	const firebaseConfig = {
+		apiKey: 'AIzaSyDRfmejb8WTxf2HS7tPZkQr-MFL4imMh3M',
+		authDomain: 'svelte-labs-pdf.firebaseapp.com',
+		projectId: 'svelte-labs-pdf',
+		storageBucket: 'svelte-labs-pdf.firebasestorage.app',
+		messagingSenderId: '386938727173',
+		appId: '1:386938727173:web:98980048eec80e4392e56c',
+		measurementId: 'G-YFBKMQ11W0'
+	};
+	let profilePicture = $state(''),
+		username = $state('Log in');
+
+	const app = initializeApp(firebaseConfig);
+	const auth = getAuth(app);
+	const provider = new GoogleAuthProvider();
 </script>
 
-<header bind:this={header} class="z-5 absolute h-[100vh] w-[100vw] flex bg-black text-white justify-between items-center p-2 select-none text-2xl transition-all duration-700 ease-in-out">
+<header
+	bind:this={header}
+	class="absolute z-5 flex h-[100vh] w-[100vw] items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
+>
+	<p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
 
-    <p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
-
-    <sl-animation bind:this={animation} name="tada" easing="easeIn">
-        <img bind:this={duck} src="/labs-lcs.png" alt="Site's Logo" class="absolute h-60 inset-0 m-auto transition-all duration-400">
-    </sl-animation>
-    <sl-tooltip content="Test user">
-        <sl-avatar bind:this={avatar} class="opacity-0">
-            <sl-icon slot="icon" name="robot"></sl-icon>
-        </sl-avatar>
-    </sl-tooltip>
-
+	<sl-animation bind:this={animation} name="tada" easing="easeIn">
+		<img
+			bind:this={duck}
+			src="/labs-lcs.png"
+			alt="Site's Logo"
+			class="absolute inset-0 m-auto h-60 transition-all duration-400"
+		/>
+	</sl-animation>
+	<sl-tooltip content={username}>
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<sl-button
+			role="button"
+			circle
+			onclick={() =>
+				signInWithPopup(auth, provider)
+					.then((result) => {
+						loggedIn = true;
+						const user = result.user;
+						profilePicture = user.photoURL || '';
+						username = user.displayName || 'Quack!';
+					})
+					.catch((error) => {
+						const errorCode = error.code;
+						const errorMessage = error.message;
+						const email = error.customData.email;
+						const credential = GoogleAuthProvider.credentialFromError(error);
+						console.error(errorCode, errorMessage, email, credential);
+					})}
+		>
+			<sl-avatar bind:this={avatar} class="opacity-0" image={profilePicture} loading="lazy">
+			</sl-avatar>
+		</sl-button>
+	</sl-tooltip>
 </header>
 
 <style lang="postcss">
-    @reference "tailwindcss/theme";
-    header {
-        font-family: 'Righteous', system-ui;
-        letter-spacing: 1px;
-    }
+	@reference "tailwindcss/theme";
+	header {
+		font-family: 'Righteous', system-ui;
+		letter-spacing: 1px;
+	}
+	sl-button::part(base) {
+		padding: 0px;
+		border: none;
+		background-color: transparent;
+	}
+	sl-button::part(label) {
+		padding: 0px;
+		background-color: transparent;
+	}
 </style>

@@ -1,10 +1,6 @@
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-
 <script lang="ts">
 	import {
 		addMultipleCovers,
-		addPdfFn,
 		deleteAll,
 		deleteSelected,
 		downloadNotMerge,
@@ -14,15 +10,16 @@
 		selectAllFn
 	} from '$lib/ts/Buttons.svelte';
 	import type {
+		SlAnimation,
 		SlButton,
 		SlCheckbox,
 		SlDialog,
 		SlInput,
 		SlTextarea
 	} from '@shoelace-style/shoelace';
-	import { pdfObjects } from '$lib/ts/globals.svelte';
+	import { pdfObjects, addPdf, notify } from '$lib/ts/main_logic.svelte';
 
-	let addPdf: HTMLInputElement,
+	let addPdfInput: HTMLInputElement,
 		bugReport: SlDialog,
 		downloadDialog: SlDialog,
 		downloadMerge: SlButton,
@@ -32,30 +29,45 @@
 		addPdfButton: SlButton,
 		addCoversButton: HTMLInputElement;
 
-	let { mergedPdfName = $bindable() }: { mergedPdfName: string } = $props();
+	let { loggedIn } = $props();
+
+	let mergedPdfName: string = $state('');
+	let shakeAnimation: SlAnimation;
+	let inputMergedPdfName: SlInput;
 </script>
 
 <div class="add-pdf-button flex flex-col items-center justify-center gap-3">
 	<div class="flex flex-row gap-2">
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<sl-button
+			role="button"
 			bind:this={addPdfButton}
 			size="small"
 			variant="primary"
 			pill
-			onclick={() => addPdf.click()}
+			onclick={() => addPdfInput.click()}
 			>add PDF
 			<sl-icon name="file-arrow-up"></sl-icon>
 			<input
-				bind:this={addPdf}
+				bind:this={addPdfInput}
 				type="file"
 				accept="application/pdf"
 				multiple
 				style="display: none;"
-				onchange={async (e) => await addPdfFn(e, addPdfButton)}
+				onchange={async (e) => {
+					addPdfButton.setAttribute('loading', '');
+					const files = e.currentTarget.files;
+					await addPdf(files);
+					addPdfButton.removeAttribute('loading');
+				}}
 			/>
 		</sl-button>
+		<!-- TODO: Toast notification when no file is selected or if it is invalid-->
 
-		<sl-button size="small" pill variant="danger" onclick={() => bugReport.show()}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
+		<sl-button role="button" size="small" pill variant="danger" onclick={() => bugReport.show()}
 			>report bugs
 			<sl-icon name="bug"></sl-icon>
 		</sl-button>
@@ -68,7 +80,14 @@
 				placeholder="Please provide a detailed description of the issue encountered."
 			>
 			</sl-textarea>
-			<sl-button slot="footer" variant="primary" onclick={() => report(reportMessage.value)}>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
+			<sl-button
+				role="button"
+				slot="footer"
+				variant="primary"
+				onclick={() => report(reportMessage.value)}
+			>
 				Send via e-mail
 				<sl-icon slot="prefix" name="bug"></sl-icon>
 			</sl-button>
@@ -76,15 +95,25 @@
 	</div>
 
 	<div class="flex flex-row items-center gap-2">
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<sl-checkbox
+			role="checkbox"
+			aria-checked="false"
 			bind:this={selectAll}
 			class="select-all-checkbox"
 			onclick={() => selectAllFn(selectAll)}
 			>select all
 		</sl-checkbox>
 
-		<sl-animation name="shake" easing="ease-in-out" id="shake-merged-name">
+		<sl-animation
+			bind:this={shakeAnimation}
+			name="shake"
+			easing="ease-in-out"
+			id="shake-merged-name"
+		>
 			<sl-input
+				bind:this={inputMergedPdfName}
 				id="merged-name"
 				placeholder="merged file name"
 				size="small"
@@ -94,8 +123,12 @@
 				oninput={(event: InputEvent) => (mergedPdfName = (event.target as SlInput).value)}
 			></sl-input>
 		</sl-animation>
+		<!-- TODO: Toast notification when no name is provided -->
 
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<sl-button
+			role="button"
 			bind:this={downloadButton}
 			size="small"
 			pill
@@ -118,10 +151,23 @@
 
 		<sl-dialog bind:this={downloadDialog} label="Download">
 			<div class="flex justify-center gap-10">
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_interactive_supports_focus -->
 				<sl-button
+					role="button"
 					bind:this={downloadMerge}
 					size="large"
 					onclick={async () => {
+						if (mergedPdfName === '') {
+							downloadDialog.hide();
+							shakeAnimation.setAttribute('play', '');
+							setTimeout(() => {
+								shakeAnimation.removeAttribute('play');
+								inputMergedPdfName.focus();
+							}, 1000);
+							return;
+						}
+
 						downloadMerge.setAttribute('loading', '');
 						await merge();
 						downloadMerge.removeAttribute('loading');
@@ -135,7 +181,9 @@
 						<sl-icon name="filetype-pdf"></sl-icon>
 					</div>
 				</sl-button>
-				<sl-button size="large" onclick={() => downloadNotMerge()}>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_interactive_supports_focus -->
+				<sl-button role="button" size="large" onclick={() => downloadNotMerge()}>
 					Not merge
 					<br />
 					<div style="font-size: 32px;">
@@ -150,7 +198,19 @@
 
 	<div class="flex flex-wrap items-center justify-center gap-2">
 		<sl-button-group label="cover">
-			<sl-button size="small" pill onclick={() => addCoversButton.click()}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
+			<sl-button
+				role="button"
+				size="small"
+				pill
+				onclick={() => {
+					if (loggedIn) {
+						addCoversButton.click();
+					} else {
+						notify('You need to log in to perform this action.');
+					}
+				}}
 				>add covers
 				<sl-icon name="file-earmark-plus"></sl-icon>
 			</sl-button>
@@ -165,14 +225,29 @@
 				}}
 			/>
 
-			<sl-button size="small" pill onclick={() => removeCover()}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
+			<sl-button
+				role="button"
+				size="small"
+				pill
+				onclick={() => {
+					if (loggedIn) {
+						removeCover();
+					} else {
+						notify('You need to log in to perform this action.');
+					}
+				}}
 				>remove covers
 				<sl-icon name="file-earmark-minus"></sl-icon>
 			</sl-button>
 		</sl-button-group>
 
 		<sl-button-group label="delete">
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
 			<sl-button
+				role="button"
 				size="small"
 				pill
 				onclick={() => {
@@ -182,7 +257,10 @@
 				<sl-icon name="file-earmark-x"></sl-icon>
 			</sl-button>
 
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_interactive_supports_focus -->
 			<sl-button
+				role="button"
 				size="small"
 				pill
 				onclick={() => {

@@ -1,62 +1,10 @@
-import type { SlAnimation, SlButton, SlCheckbox, SlInput } from '@shoelace-style/shoelace';
-import { storeCover, storeFile } from './db.svelte';
+import type { SlAnimation, SlCheckbox, SlInput } from '@shoelace-style/shoelace';
 import { renderPdf } from './render.svelte';
 import { getDocument } from 'pdfjs-dist';
-import { pdfObjects, type CoverItemInterface } from './globals.svelte';
 import { PDFDocument } from 'mupdf/mupdfjs';
 import { openDB } from 'idb';
-
-// Add PDF Button
-export async function addPdfFn(
-	e: { currentTarget: EventTarget & HTMLInputElement },
-	addPdfButton: SlButton
-) {
-	addPdfButton.setAttribute('loading', '');
-	const files = e.currentTarget.files;
-	if (files) {
-		const filesArray = Array.from(files);
-		for (const file of filesArray) {
-			const database = 'pdf_db',
-				store = 'unmodified',
-				buffer = await file.arrayBuffer(),
-				size = file.size,
-				pages = PDFDocument.openDocument(buffer, 'application/pdf').countPages(),
-				pagesArray = Array.from(Array(pages).keys()),
-				pdfId = `${Date.now() + size}`,
-				pdfName = file.name,
-				pdfThumbnail = '',
-				hasCover = false,
-				coverId = `cover-${pdfId}`,
-				coverThumbnail = '',
-				tag = 'Non edited',
-				selected = false;
-
-			const pdf = {
-				database,
-				store,
-				buffer,
-				size,
-				pages,
-				pagesArray,
-				pdfId,
-				pdfName,
-				pdfThumbnail,
-				hasCover,
-				coverId,
-				coverThumbnail,
-				tag,
-				selected
-			};
-
-			await storeFile(pdf);
-			const pdfDoc = await getDocument({ data: pdf.buffer }).promise; // arraybuffer detached. data passed to pdfDoc
-			pdf.pdfThumbnail = await renderPdf(pdfDoc, 1);
-			pdfDoc.destroy();
-			pdfObjects.push(pdf);
-		}
-	}
-	addPdfButton.removeAttribute('loading');
-}
+import type { CoverItemInterface } from './interfaces.svelte';
+import { pdfObjects, storeCover } from './main_logic.svelte';
 
 // Bug Report Button
 export function report(message: string) {
@@ -98,54 +46,55 @@ export async function merge() {
 		const item = items[i];
 		ids.push(item.id);
 	}
-	if (ids.length > 1) {
-		const mergedName = document.getElementById('merged-name')!;
-		if ((mergedName as SlInput).value === '') {
-			const shakeElement = document.getElementById('shake-merged-name')!;
-			(shakeElement as SlAnimation).setAttribute('play', '');
-			setTimeout(() => {
-				shakeElement.removeAttribute('play');
-			}, 1000);
-			return;
-		}
-		const db = await openDB('pdf_db');
-		const pdfItem = await db.get('unmodified', ids[0]);
-		const buffer = pdfItem.buffer;
-		const tmpPdf = PDFDocument.openDocument(buffer, 'application/pdf');
-		const coverItem = await db.get('unmodified', `cover-${ids[0]}`);
-		if (coverItem) {
-			const coverBuffer = coverItem.buffer;
-			const loadedCover = PDFDocument.openDocument(coverBuffer, 'application/pdf');
-			tmpPdf.merge(loadedCover, 0, 0, 0);
-		}
-		for (let i = 1; i < ids.length; i++) {
-			const cover = await db.get('unmodified', `cover-${ids[i]}`);
-			if (cover) {
-				const id = ids[i];
-				const pdf = await db.get('unmodified', id);
-				const pdfBuffer: ArrayBuffer = pdf.buffer;
-				const coverBuffer = cover.buffer;
-				const loadedPdf = PDFDocument.openDocument(pdfBuffer, 'application/pdf');
-				const loadedCover = PDFDocument.openDocument(coverBuffer, 'application/pdf');
-				tmpPdf.merge(loadedCover);
-				tmpPdf.merge(loadedPdf);
-			} else {
-				const id = ids[i];
-				const pdf = await db.get('unmodified', id);
-				const pdfBuffer: ArrayBuffer = pdf.buffer;
-				const loadedPdf = PDFDocument.openDocument(pdfBuffer, 'application/pdf');
-				tmpPdf.merge(loadedPdf);
-			}
-		}
-		const mergedPdfBuffer = tmpPdf.saveToBuffer().asUint8Array();
-		const blob = new Blob([mergedPdfBuffer], { type: 'application/pdf' });
-		const url = window.URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = `${(mergedName as SlInput).value}.pdf`;
-		link.click();
-		window.URL.revokeObjectURL(url);
+	//
+	// TODO: I need to pass mergedName as a parameter.
+	//
+	const mergedName = document.getElementById('merged-name')!;
+	if ((mergedName as SlInput).value === '') {
+		const shakeElement = document.getElementById('shake-merged-name')!;
+		(shakeElement as SlAnimation).setAttribute('play', '');
+		setTimeout(() => {
+			shakeElement.removeAttribute('play');
+		}, 1000);
+		return;
 	}
+	const db = await openDB('pdf_db');
+	const pdfItem = await db.get('unmodified', ids[0]);
+	const buffer = pdfItem.buffer;
+	const tmpPdf = PDFDocument.openDocument(buffer, 'application/pdf');
+	const coverItem = await db.get('unmodified', `cover-${ids[0]}`);
+	if (coverItem) {
+		const coverBuffer = coverItem.buffer;
+		const loadedCover = PDFDocument.openDocument(coverBuffer, 'application/pdf');
+		tmpPdf.merge(loadedCover, 0, 0, 0);
+	}
+	for (let i = 1; i < ids.length; i++) {
+		const cover = await db.get('unmodified', `cover-${ids[i]}`);
+		if (cover) {
+			const id = ids[i];
+			const pdf = await db.get('unmodified', id);
+			const pdfBuffer: ArrayBuffer = pdf.buffer;
+			const coverBuffer = cover.buffer;
+			const loadedPdf = PDFDocument.openDocument(pdfBuffer, 'application/pdf');
+			const loadedCover = PDFDocument.openDocument(coverBuffer, 'application/pdf');
+			tmpPdf.merge(loadedCover);
+			tmpPdf.merge(loadedPdf);
+		} else {
+			const id = ids[i];
+			const pdf = await db.get('unmodified', id);
+			const pdfBuffer: ArrayBuffer = pdf.buffer;
+			const loadedPdf = PDFDocument.openDocument(pdfBuffer, 'application/pdf');
+			tmpPdf.merge(loadedPdf);
+		}
+	}
+	const mergedPdfBuffer = tmpPdf.saveToBuffer().asUint8Array();
+	const blob = new Blob([mergedPdfBuffer], { type: 'application/pdf' });
+	const url = window.URL.createObjectURL(blob);
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = `${(mergedName as SlInput).value}.pdf`;
+	link.click();
+	window.URL.revokeObjectURL(url);
 }
 
 export async function downloadNotMerge() {
@@ -238,7 +187,9 @@ export async function removeCover() {
 	if (selectedItems) {
 		const db = await openDB('pdf_db');
 		for (let i = 0; i < selectedItems.length; i++) {
-			const index = pdfObjects.findIndex((pdf) => pdf.pdfId === selectedItems[i].id);
+			const index = pdfObjects.findIndex(
+				(pdf: { pdfId: string }) => pdf.pdfId === selectedItems[i].id
+			);
 			pdfObjects[index].coverThumbnail = '';
 			const thumbnail = selectedItems[i].querySelector('.cover-thumbnail')!.querySelector('img')!;
 			thumbnail.src = '/assets/custom-cover.png';
@@ -254,7 +205,9 @@ export async function deleteSelected() {
 	if (selectedItems) {
 		const db = await openDB('pdf_db');
 		for (let i = 0; i < selectedItems.length; i++) {
-			const index = pdfObjects.findIndex((pdf) => pdf.pdfId === selectedItems[i].id);
+			const index = pdfObjects.findIndex(
+				(pdf: { pdfId: string }) => pdf.pdfId === selectedItems[i].id
+			);
 			pdfObjects.splice(index, 1);
 			db.delete(selectedItems[i].getAttribute('data-store')!, selectedItems[i].id);
 		}
@@ -273,7 +226,7 @@ export async function deleteAll() {
 }
 
 // Get Selected
-function getSelected() {
+export function getSelected() {
 	const selectedItems = document
 		.querySelector('.list-area')
 		?.querySelectorAll('li[data-selected="true"]');

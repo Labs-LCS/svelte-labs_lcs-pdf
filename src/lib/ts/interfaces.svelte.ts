@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 
 export interface ListItemInterface {
 	database: string;
@@ -15,9 +14,7 @@ export interface ListItemInterface {
 	coverThumbnail: string;
 	tag: string;
 	selected: boolean;
-}
-
-export let pdfObjects: ListItemInterface[] = $state([]);
+};
 
 export interface CoverItemInterface {
 	database: string;
@@ -25,10 +22,13 @@ export interface CoverItemInterface {
 	buffer: ArrayBuffer;
 	id: string;
 	coverThumbnail: string;
-}
+};
 
-export let coverObjects: CoverItemInterface[] = $state([]);
-
-export let mergedPdfName: string = $state(''),
-	mergedPdfPages: number = $state(0),
-	mergedPdfSize: number = $state(0);
+export interface pdfObj {
+	buffer: ArrayBuffer;
+	id: string;
+};
+export interface pageImgObj {
+	src: string;
+	pageId: string;
+};

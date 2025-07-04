@@ -2,19 +2,11 @@
 	import '../app.css';
 	import '@fontsource/righteous';
 	import '@shoelace-style/shoelace/dist/themes/light.css';
-	import Header from '$lib/components/Header.svelte';
-	import Footer from '$lib/components/Footer.svelte';
 
-	let content: HTMLDivElement;
-	let { children } = $props();
-
+	let { children } = $props(); // This displays +page.svelte file.
 </script>
 
-<div bind:this={content} class="flex relative flex-col bg-gray-200 w-screen h-screen">
-	<Header />
-	{@render children()}
-	<Footer />
-</div>
+{@render children()}
 
 <style>
 	:root {

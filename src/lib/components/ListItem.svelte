@@ -1,17 +1,12 @@
 <script lang="ts">
-	import {
-		addSingleCover,
-		deleteSinglePdf,
-		moveDown,
-		moveUp,
-		savePdf
-	} from '$lib/ts/ListItem.svelte';
+	import type { ListItemInterface } from '$lib/ts/interfaces.svelte';
+	import { addSingleCover, deleteSinglePdf, savePdf } from '$lib/ts/ListItem.svelte';
+	import { notify } from '$lib/ts/main_logic.svelte';
 	import EditView from './EditView.svelte';
-	import { SlButton, SlCheckbox, SlDialog, type SlDrawer, SlInput } from '@shoelace-style/shoelace';
-	import { type ListItemInterface } from '$lib/ts/globals.svelte';
+	import { SlButton, SlCheckbox, type SlDrawer, SlInput } from '@shoelace-style/shoelace';
 	import { onMount } from 'svelte';
 
-	let { pdf }: { pdf: ListItemInterface } = $props();
+	let { pdf, loggedIn }: { pdf: ListItemInterface; loggedIn: boolean } = $props();
 
 	let liItem: HTMLLIElement,
 		divCover: HTMLDivElement,
@@ -23,7 +18,6 @@
 		drawer: SlDrawer,
 		editViewOpen: boolean = $state(false),
 		pageOrder: string[] = $state([]),
-		// splitDialog: SlDialog,
 		saveButton: SlButton,
 		progress: number = $state(0);
 
@@ -79,7 +73,13 @@
 				class="select-button cover-thumbnail"
 				variant="default"
 				size="medium"
-				onclick={() => coverInput.click()}
+				onclick={() => {
+					if (loggedIn) {
+						coverInput.click();
+					} else {
+						notify('You need to log in to perform this action.');
+					}
+				}}
 			>
 				<img
 					src={pdf.coverThumbnail ? pdf.coverThumbnail : '/assets/custom-cover.png'}
@@ -204,8 +204,47 @@
 				<sl-format-bytes value={pdf.size}></sl-format-bytes>
 				<div>Pages: {pdf.pages}</div>
 			</div>
-			<sl-icon-button name="info-circle"></sl-icon-button>
+			<sl-icon-button name="info-circle"> </sl-icon-button>
 		</sl-tooltip>
+		<!-- <sl-dialog bind:this={fileInfoDialog} label="File info"> -->
+		<!-- 	<div class="flex w-full flex-col"> -->
+		<!-- 		<div class="w-full flex-row justify-center bg-gray-50"> -->
+		<!-- 			<div class="flex flex-row justify-between"> -->
+		<!-- 				<div>Format</div> -->
+		<!-- 				<div>{pdf.format}</div> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+		<!---->
+		<!-- 		<div class="w-full flex-row justify-center"> -->
+		<!-- 			<div class="flex flex-row justify-between"> -->
+		<!-- 				<div>Encryption</div> -->
+		<!-- 				<div>{pdf.encryption}</div> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+		<!---->
+		<!-- 		<div class="w-full flex-row justify-center"> -->
+		<!-- 			<div class="flex flex-row justify-between"> -->
+		<!-- 				<div>Author</div> -->
+		<!-- 				<div>{pdf.author}</div> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+		<!---->
+		<!-- 		<div class="w-full flex-row justify-center bg-gray-50"> -->
+		<!-- 			<div class="flex flex-row justify-between"> -->
+		<!-- 				<div>Creation Date</div> -->
+		<!-- 				<div>{pdf.creationDate}</div> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+		<!---->
+		<!-- 		<div class="w-full flex-row justify-center"> -->
+		<!-- 			<div class="flex flex-row justify-between"> -->
+		<!-- 				<div>Last Modification</div> -->
+		<!-- 				<div>{pdf.modificationDate}</div> -->
+		<!-- 			</div> -->
+		<!-- 		</div> -->
+		<!-- 	</div></sl-dialog -->
+		<!-- > -->
+		<!-- TODO: Implement getMetaData function (from MuPDF) -->
 		<sl-icon class="handle cursor-grab" name="arrows-move"></sl-icon>
 		<sl-icon-button
 			name="trash"
