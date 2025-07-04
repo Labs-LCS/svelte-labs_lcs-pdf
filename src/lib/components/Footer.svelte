@@ -21,7 +21,10 @@
 			</p>
 		</sl-carousel-item>
 		<sl-carousel-item>
-			<p>Currently under development. The official launch is anticipated in June 2025.</p>
+			<p>No data is stored outside your browser.</p>
+		</sl-carousel-item>
+		<sl-carousel-item>
+			<p>Backend features under development.</p>
 		</sl-carousel-item>
 	</sl-carousel>
 </footer>
@@ -42,4 +45,3 @@
 		min-width: 100vw;
 	}
 </style>
-
