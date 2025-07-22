@@ -2,7 +2,7 @@
 	import Sortable from 'sortablejs';
 	import BasicTools from './BasicTools.svelte';
 	import ListItem from './ListItem.svelte';
-	import { addPdf, pdfObjects } from '$lib/ts/main_logic.svelte';
+	import { addPdf, pdfObjects } from '$lib/pdf_editor/ts/main_logic.svelte';
 	import { onMount } from 'svelte';
 
 	let mainArea: HTMLDivElement,
@@ -52,7 +52,7 @@
 		{#if pdfObjects.length < 1}
 			<div
 				class={[
-					'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl',
+					'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl select-none',
 					{ 'text-gray-500': !dragoverHint },
 					{ 'text-orange-500': dragoverHint }
 				]}

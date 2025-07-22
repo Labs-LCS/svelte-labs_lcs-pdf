@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { SlCheckbox } from '@shoelace-style/shoelace';
 
-	let { pageId, src }: { pageId: string; src: string } = $props();
+	let { pageId, src, thumbnailSize }: { pageId: string; src: string; thumbnailSize: string } =
+		$props();
 
 	let selected: boolean = $state(false),
 		checkbox: SlCheckbox;
@@ -13,7 +14,10 @@
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<img
 		class={[
-			'aspect-auto h-55 border',
+			'aspect-auto border',
+			{ 'h-30': thumbnailSize == 'small' },
+			{ 'h-80': thumbnailSize == 'medium' },
+			{ 'h-150': thumbnailSize == 'big' },
 			{ 'border-orange-600': selected },
 			{ 'border-transparent': !selected }
 		]}

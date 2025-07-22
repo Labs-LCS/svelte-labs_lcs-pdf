@@ -60,16 +60,17 @@
 	bind:this={header}
 	class="absolute z-5 flex h-[100vh] w-[100vw] items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
 >
-	<p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
-
+	<a href="./">
+		<p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
+	</a>
 	<sl-animation bind:this={animation} name="tada" easing="easeIn">
 		<img
 			bind:this={duck}
 			src="/labs-lcs.png"
 			alt="Site's Logo"
-			class="absolute inset-0 m-auto h-60 transition-all duration-400"
-		/>
-	</sl-animation>
+			class="pointer-events-none absolute inset-0 m-auto h-60 transition-all duration-400 select-none"
+		/></sl-animation
+	>
 	<sl-tooltip content={username}>
 		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ListItemInterface } from '$lib/ts/interfaces.svelte';
-	import { addSingleCover, deleteSinglePdf, savePdf } from '$lib/ts/ListItem.svelte';
-	import { notify } from '$lib/ts/main_logic.svelte';
+	import type { ListItemInterface } from '$lib/pdf_editor/ts/interfaces.svelte';
+	import { addSingleCover, deleteSinglePdf, savePdf } from '$lib/pdf_editor/ts/ListItem.svelte';
+	import { notify } from '$lib/pdf_editor/ts/main_logic.svelte';
 	import EditView from './EditView.svelte';
 	import { SlButton, SlCheckbox, type SlDrawer, SlInput } from '@shoelace-style/shoelace';
 	import { onMount } from 'svelte';
@@ -116,7 +116,6 @@
 		>
 			<sl-button
 				variant="danger"
-				class="delete-pages-modal"
 				slot="footer"
 				style="padding-right: 15px;"
 				disabled={progress !== 100 ? 'true' : false}
@@ -124,35 +123,9 @@
 					deletePages();
 				}}>Delete</sl-button
 			>
-			<!-- <sl-button
-				variant="warning"
-				class="delete-pages-modal"
-				slot="footer"
-				style="padding-right: 15px;"
-				disabled={progress !== 100 ? 'true' : false}
-				onclick={() => {
-					splitDialog.show();
-				}}>Split</sl-button
-			>
-			<sl-dialog bind:this={splitDialog} label="Split pages" style="--width: 100vw;">
-				<div class="flex justify-between">
-					<div class="flex flex-col">
-						Document 1
-						<sl-input size="small" type="number" placeholder="First page"></sl-input>
-						<img src={`${document.getElementById('')}`} alt="">
-						<sl-input size="small" type="number" placeholder="Last page"></sl-input>
-					</div>
-					<div class="flex flex-col">
-						Document 2
-						<sl-input size="small" type="number" placeholder="First page"></sl-input>
-						<sl-input size="small" type="number" placeholder="Last page"></sl-input>
-					</div>
-				</div>
-			</sl-dialog> -->
 			<sl-button
 				bind:this={saveButton}
 				variant="success"
-				class="save-modal"
 				slot="footer"
 				style="padding-right: 15px;"
 				disabled={progress !== 100 ? 'true' : false}

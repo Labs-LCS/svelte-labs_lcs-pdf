@@ -38,6 +38,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@fontsource-variable/montserrat": "^5.2.6",
 		"@fontsource/righteous": "^5.1.1",
 		"@shoelace-style/shoelace": "^2.20.1",
 		"fflate": "^0.8.2",

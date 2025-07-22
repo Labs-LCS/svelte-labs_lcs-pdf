@@ -8,7 +8,7 @@
 		removeCover,
 		report,
 		selectAllFn
-	} from '$lib/ts/Buttons.svelte';
+	} from '$lib/pdf_editor/ts/Buttons.svelte';
 	import type {
 		SlAnimation,
 		SlButton,
@@ -17,7 +17,7 @@
 		SlInput,
 		SlTextarea
 	} from '@shoelace-style/shoelace';
-	import { pdfObjects, addPdf, notify } from '$lib/ts/main_logic.svelte';
+	import { pdfObjects, addPdf, notify } from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let addPdfInput: HTMLInputElement,
 		bugReport: SlDialog,

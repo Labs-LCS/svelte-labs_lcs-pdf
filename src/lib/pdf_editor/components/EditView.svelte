@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import Sortable from 'sortablejs';
 	import PageThumbnail from './PageThumbnail.svelte';
-	import { type pageImgObj } from '$lib/ts/ListItem.svelte';
+	import { type pageImgObj } from '$lib/pdf_editor/ts/ListItem.svelte';
 	import { openDB } from 'idb';
 	import { getDocument } from 'pdfjs-dist';
-	import { renderPdf } from '$lib/ts/render.svelte';
+	import { renderPdf } from '$lib/pdf_editor/ts/render.svelte';
 
 	interface dbPdfObject {
 		id: string;
@@ -13,7 +13,8 @@
 	}
 
 	let editView: HTMLDivElement,
-		srcs: pageImgObj[] = $state([]);
+		srcs: pageImgObj[] = $state([]),
+		thumbnailSize: string = $state('medium');
 
 	let {
 		database,
@@ -49,8 +50,42 @@
 	bind:this={editView}
 	class="edit-view flex h-full w-full flex-wrap items-center justify-center gap-2 overflow-auto rounded-xl bg-gray-100 p-4 inset-shadow-2xs"
 >
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_interactive_supports_focus -->
+	<div
+		class="fixed right-5 bottom-25 z-50 rounded-tl-2xl border-t border-l border-t-orange-500 border-l-orange-500 bg-gray-100 p-2"
+	>
+		<sl-icon-button
+			name="zoom-in"
+			role="button"
+			onclick={() => {
+				if (thumbnailSize == 'small') {
+					thumbnailSize = 'medium';
+					console.log(thumbnailSize);
+				} else if (thumbnailSize == 'medium') {
+					thumbnailSize = 'big';
+					console.log(thumbnailSize);
+				}
+			}}
+		>
+		</sl-icon-button>
+		<sl-icon-button
+			name="zoom-out"
+			role="button"
+			onclick={() => {
+				if (thumbnailSize == 'big') {
+					thumbnailSize = 'medium';
+					console.log(thumbnailSize);
+				} else if (thumbnailSize == 'medium') {
+					thumbnailSize = 'small';
+					console.log(thumbnailSize);
+				}
+			}}
+		>
+		</sl-icon-button>
+	</div>
 	{#each srcs as pageImgObj}
-		<PageThumbnail pageId={pageImgObj.pageId} src={pageImgObj.src} />
+		<PageThumbnail pageId={pageImgObj.pageId} src={pageImgObj.src} {thumbnailSize} />
 	{/each}
 </div>
 
