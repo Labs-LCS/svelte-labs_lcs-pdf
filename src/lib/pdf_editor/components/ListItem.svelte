@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { ListItemInterface } from '$lib/pdf_editor/ts/interfaces.svelte';
-	import { addSingleCover, deleteSinglePdf, savePdf } from '$lib/pdf_editor/ts/ListItem.svelte';
-	import { notify } from '$lib/pdf_editor/ts/main_logic.svelte';
+	import type { SlDrawer } from '@shoelace-style/shoelace';
+	import { SlButton, SlCheckbox, SlInput } from '@shoelace-style/shoelace';
 	import EditView from './EditView.svelte';
-	import { SlButton, SlCheckbox, type SlDrawer, SlInput } from '@shoelace-style/shoelace';
 	import { onMount } from 'svelte';
-
-	let { pdf, loggedIn }: { pdf: ListItemInterface; loggedIn: boolean } = $props();
+	import {
+		addSingleCover,
+		deleteSinglePdf,
+		notify,
+		savePdf
+	} from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let liItem: HTMLLIElement,
 		divCover: HTMLDivElement,
@@ -14,12 +17,13 @@
 		checkbox: SlCheckbox,
 		isSelected = $state(false),
 		coverInput: HTMLInputElement,
-		tag = $derived(pdf.tag),
 		drawer: SlDrawer,
 		editViewOpen: boolean = $state(false),
 		pageOrder: string[] = $state([]),
 		saveButton: SlButton,
-		progress: number = $state(0);
+		progress: number = $state(0),
+		{ pdf, loggedIn }: { pdf: ListItemInterface; loggedIn: boolean } = $props(),
+		tag = $derived(pdf.tag);
 
 	function deletePages() {
 		const pagesToDelete = drawer.querySelector('.edit-view')!.querySelectorAll('.selected');
@@ -179,45 +183,6 @@
 			</div>
 			<sl-icon-button name="info-circle"> </sl-icon-button>
 		</sl-tooltip>
-		<!-- <sl-dialog bind:this={fileInfoDialog} label="File info"> -->
-		<!-- 	<div class="flex w-full flex-col"> -->
-		<!-- 		<div class="w-full flex-row justify-center bg-gray-50"> -->
-		<!-- 			<div class="flex flex-row justify-between"> -->
-		<!-- 				<div>Format</div> -->
-		<!-- 				<div>{pdf.format}</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
-		<!---->
-		<!-- 		<div class="w-full flex-row justify-center"> -->
-		<!-- 			<div class="flex flex-row justify-between"> -->
-		<!-- 				<div>Encryption</div> -->
-		<!-- 				<div>{pdf.encryption}</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
-		<!---->
-		<!-- 		<div class="w-full flex-row justify-center"> -->
-		<!-- 			<div class="flex flex-row justify-between"> -->
-		<!-- 				<div>Author</div> -->
-		<!-- 				<div>{pdf.author}</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
-		<!---->
-		<!-- 		<div class="w-full flex-row justify-center bg-gray-50"> -->
-		<!-- 			<div class="flex flex-row justify-between"> -->
-		<!-- 				<div>Creation Date</div> -->
-		<!-- 				<div>{pdf.creationDate}</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
-		<!---->
-		<!-- 		<div class="w-full flex-row justify-center"> -->
-		<!-- 			<div class="flex flex-row justify-between"> -->
-		<!-- 				<div>Last Modification</div> -->
-		<!-- 				<div>{pdf.modificationDate}</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
-		<!-- 	</div></sl-dialog -->
-		<!-- > -->
-		<!-- TODO: Implement getMetaData function (from MuPDF) -->
 		<sl-icon class="handle cursor-grab" name="arrows-move"></sl-icon>
 		<sl-icon-button
 			name="trash"

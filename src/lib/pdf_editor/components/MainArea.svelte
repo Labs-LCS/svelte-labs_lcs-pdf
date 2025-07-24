@@ -1,12 +1,11 @@
 <script lang="ts">
 	import Sortable from 'sortablejs';
+	import { onMount } from 'svelte';
 	import BasicTools from './BasicTools.svelte';
 	import ListItem from './ListItem.svelte';
 	import { addPdf, pdfObjects } from '$lib/pdf_editor/ts/main_logic.svelte';
-	import { onMount } from 'svelte';
 
-	let mainArea: HTMLDivElement,
-		listArea: HTMLUListElement,
+	let listArea: HTMLUListElement,
 		dragoverHint: boolean = $state(false),
 		{ loggedIn = $bindable() } = $props();
 
@@ -24,7 +23,6 @@
 <!-- eslint-disable-next-line svelte/valid-compile -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	bind:this={mainArea}
 	ondrop={async (e) => {
 		e.preventDefault();
 		const files = e.dataTransfer?.files;
@@ -52,12 +50,14 @@
 		{#if pdfObjects.length < 1}
 			<div
 				class={[
-					'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl select-none',
+					'absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-row gap-x-2 text-3xl select-none',
 					{ 'text-gray-500': !dragoverHint },
 					{ 'text-orange-500': dragoverHint }
 				]}
 			>
-				&#8623; Drop your PDFs here &#8623;
+				<span>&#8623</span>
+				<span class="text-center">Drop your PDFs here</span>
+				<span>&#8623</span>
 			</div>
 		{/if}
 		{#each pdfObjects as pdf}

@@ -3,15 +3,18 @@
 	import { initializeApp } from 'firebase/app';
 	import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-	let { loggedIn = $bindable() } = $props();
-
 	let header: HTMLElement,
 		labsName: HTMLParagraphElement,
 		animation: HTMLElement,
 		duck: HTMLImageElement,
-		avatar: HTMLElement;
+		avatar: HTMLElement,
+		{ loggedIn = $bindable() } = $props();
 
 	onMount(() => {
+		navigator.serviceWorker
+			.register('/service-worker.js')
+			.then((reg) => console.log('Service Worker registered:', reg.scope))
+			.catch((err) => console.error('Service Worker registration failed:', err));
 		setTimeout(() => {
 			animation.setAttribute('play', '');
 
@@ -36,7 +39,7 @@
 				header.classList.remove('duration-700');
 				header.classList.remove('ease-in-out');
 			}, 2200);
-		}, 500);
+		}, 0);
 	});
 
 	const firebaseConfig = {

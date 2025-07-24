@@ -9,6 +9,6 @@
 	onMount(async () => {});
 </script>
 
-<div class="flex h-screen w-screen flex-col text-white">
+<div class="flex h-full w-full flex-col text-white">
 	<LandingPage />
 </div>

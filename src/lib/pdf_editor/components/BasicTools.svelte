@@ -4,11 +4,15 @@
 		deleteAll,
 		deleteSelected,
 		downloadNotMerge,
-		merge,
+		mergeAndDownload,
 		removeCover,
 		report,
-		selectAllFn
-	} from '$lib/pdf_editor/ts/Buttons.svelte';
+		selectAllFn,
+		pdfObjects,
+		addPdf,
+		notify
+	} from '$lib/pdf_editor/ts/main_logic.svelte';
+
 	import type {
 		SlAnimation,
 		SlButton,
@@ -17,7 +21,6 @@
 		SlInput,
 		SlTextarea
 	} from '@shoelace-style/shoelace';
-	import { pdfObjects, addPdf, notify } from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let addPdfInput: HTMLInputElement,
 		bugReport: SlDialog,
@@ -27,13 +30,11 @@
 		reportMessage: SlTextarea,
 		selectAll: SlCheckbox,
 		addPdfButton: SlButton,
-		addCoversButton: HTMLInputElement;
-
-	let { loggedIn } = $props();
-
-	let mergedPdfName: string = $state('');
-	let shakeAnimation: SlAnimation;
-	let inputMergedPdfName: SlInput;
+		addCoversButton: HTMLInputElement,
+		shakeAnimation: SlAnimation,
+		inputMergedPdfName: SlInput,
+		mergedPdfName: string = $state(''),
+		{ loggedIn } = $props();
 </script>
 
 <div class="add-pdf-button flex flex-col items-center justify-center gap-3">
@@ -63,7 +64,6 @@
 				}}
 			/>
 		</sl-button>
-		<!-- TODO: Toast notification when no file is selected or if it is invalid-->
 
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_interactive_supports_focus -->
@@ -123,7 +123,6 @@
 				oninput={(event: InputEvent) => (mergedPdfName = (event.target as SlInput).value)}
 			></sl-input>
 		</sl-animation>
-		<!-- TODO: Toast notification when no name is provided -->
 
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_interactive_supports_focus -->
@@ -169,7 +168,7 @@
 						}
 
 						downloadMerge.setAttribute('loading', '');
-						await merge();
+						await mergeAndDownload();
 						downloadMerge.removeAttribute('loading');
 					}}
 				>

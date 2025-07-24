@@ -1,17 +1,7 @@
-<script lang="ts">
-	import { onMount } from 'svelte';
-
-	let carousel: HTMLElement;
-	onMount(() => {
-		carousel.setAttribute('autoplay', '');
-		carousel.setAttribute('loop', '');
-	});
-</script>
-
 <footer
 	class="absolute bottom-0 flex w-[100vw] content-center bg-black text-center text-xs text-white"
 >
-	<sl-carousel bind:this={carousel}>
+	<sl-carousel autoplay loop>
 		<sl-carousel-item>
 			<p>
 				For bug reports, suggestions, or commercial inquiries, please e-mail <a
@@ -30,10 +20,6 @@
 </footer>
 
 <style>
-	footer {
-		font-family: 'Righteous', system-ui;
-		letter-spacing: 1px;
-	}
 	p {
 		padding: 2px;
 	}

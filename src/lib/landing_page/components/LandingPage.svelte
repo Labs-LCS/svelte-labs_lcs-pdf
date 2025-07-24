@@ -37,7 +37,7 @@
 	<DsAinC />
 	<Separator />
 	<SplitFoca />
-
+	<div class="h-[48px] w-full bg-black"></div>
 	<div
 		bind:this={footer}
 		class="fixed bottom-0 flex h-0 w-[100vw] items-center justify-center bg-black text-center text-xs text-white transition-all"
@@ -52,19 +52,3 @@
 		</p>
 	</div>
 </div>
-
-<style>
-	.font-righteous {
-		font-family: 'Righteous', system-ui;
-	}
-	.letter {
-		opacity: 0;
-		animation: fadeIn 0.1s ease-in forwards;
-	}
-
-	@keyframes fadeIn {
-		to {
-			opacity: 1;
-		}
-	}
-</style>

@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { SlCheckbox } from '@shoelace-style/shoelace';
 
-	let { pageId, src, thumbnailSize }: { pageId: string; src: string; thumbnailSize: string } =
-		$props();
-
 	let selected: boolean = $state(false),
-		checkbox: SlCheckbox;
+		checkbox: SlCheckbox,
+		{ pageId, src, thumbnailSize }: { pageId: string; src: string; thumbnailSize: string } =
+			$props();
 </script>
 
 <div id={pageId} class={['page relative', { selected: selected }]}>

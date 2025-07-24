@@ -1,28 +1,22 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Sortable from 'sortablejs';
 	import PageThumbnail from './PageThumbnail.svelte';
-	import { type pageImgObj } from '$lib/pdf_editor/ts/ListItem.svelte';
 	import { openDB } from 'idb';
+	import { onMount } from 'svelte';
 	import { getDocument } from 'pdfjs-dist';
 	import { renderPdf } from '$lib/pdf_editor/ts/render.svelte';
-
-	interface dbPdfObject {
-		id: string;
-		buffer: ArrayBuffer;
-	}
+	import type { dbPdfObject, pageImgObj } from '$lib/pdf_editor/ts/interfaces.svelte';
 
 	let editView: HTMLDivElement,
 		srcs: pageImgObj[] = $state([]),
-		thumbnailSize: string = $state('medium');
-
-	let {
-		database,
-		store,
-		id,
-		pages,
-		progress = $bindable()
-	}: { database: string; store: string; id: string; pages: number; progress: number } = $props();
+		thumbnailSize: string = $state('medium'),
+		{
+			database,
+			store,
+			id,
+			pages,
+			progress = $bindable()
+		}: { database: string; store: string; id: string; pages: number; progress: number } = $props();
 
 	onMount(async () => {
 		Sortable.create(editView, {

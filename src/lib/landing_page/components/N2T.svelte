@@ -19,7 +19,9 @@
 </script>
 
 <div class="flex min-h-[400px] flex-col items-center lg:flex-row">
-	<div class="flex flex-col content-center items-center p-2 sm:max-w-160 md:max-w-120 lg:max-w-90">
+	<div
+		class="flex max-w-[480px] min-w-[360px] flex-col content-center items-center p-2 sm:max-w-[480px] md:w-[480px] lg:max-w-90"
+	>
 		<a href="https://www.nand2tetris.org/course" target="_blank">
 			<sl-carousel
 				class=""
@@ -89,8 +91,8 @@
 			every level. By building these foundations from first principles, I aim to move beyond
 			dependency on high-level abstractions and frameworks. This approach supports more informed
 			decision-making when designing complex systems, and fosters a stronger, more independent
-			problem-solving mindset. As per the author's request, my solution for each project will be
-			provided only upon request.
+			problem-solving mindset. As per the course authors' suggestion, my solution for each project
+			will be provided only upon request.
 			<a href="https://www.nand2tetris.org/license" target="_blank">License</a>
 		</p>
 		<sl-carousel class="flex-1" style="--aspect-ratio: 3/4;" loop autoplay orientation="vertical">

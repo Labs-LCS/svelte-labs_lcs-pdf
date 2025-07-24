@@ -1,7 +1,9 @@
 <script></script>
 
 <div class="flex min-h-[400px] flex-col items-center lg:flex-row">
-	<div class="flex flex-col content-center items-center p-2 sm:max-w-160 md:max-w-120 lg:max-w-90">
+	<div
+		class="flex max-w-[480px] min-w-[360px] flex-col content-center items-center p-2 sm:max-w-[480px] md:w-[480px] lg:max-w-90"
+	>
 		<a href="https://github.com/Labs-LCS/DSA_in_C" target="_blank">
 			<sl-carousel
 				class=""
