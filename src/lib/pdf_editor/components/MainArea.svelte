@@ -10,6 +10,13 @@
 		{ loggedIn = $bindable() } = $props();
 
 	onMount(() => {
+		window.addEventListener('unhandledrejection', (event) => {
+			console.warn('Unhandled promise rejection:', event.reason);
+		});
+		window.addEventListener('error', (event) => {
+			console.warn('Global JS error:', event.message, event.error);
+		});
+
 		Sortable.create(listArea, {
 			group: 'items-list',
 			animation: 200,

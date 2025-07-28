@@ -24,9 +24,8 @@
 
 	let addPdfInput: HTMLInputElement,
 		bugReport: SlDialog,
-		downloadDialog: SlDialog,
-		downloadMerge: SlButton,
 		downloadButton: SlButton,
+		mergeButton: SlButton,
 		reportMessage: SlTextarea,
 		selectAll: SlCheckbox,
 		addPdfButton: SlButton,
@@ -128,18 +127,42 @@
 		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<sl-button
 			role="button"
+			bind:this={mergeButton}
+			size="small"
+			pill
+			variant="primary"
+			disabled={pdfObjects.length < 2}
+			onclick={async () => {
+				if (mergedPdfName === '') {
+					shakeAnimation.setAttribute('play', '');
+					setTimeout(() => {
+						shakeAnimation.removeAttribute('play');
+						inputMergedPdfName.focus();
+					}, 1000);
+					return;
+				}
+				mergeButton.setAttribute('loading', '');
+				await mergeAndDownload();
+				mergeButton.removeAttribute('loading');
+			}}
+			>merge all
+			<sl-icon name="files"></sl-icon>
+			<sl-icon name="arrow-right-short"></sl-icon>
+			<sl-icon name="filetype-pdf"></sl-icon>
+		</sl-button>
+
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_interactive_supports_focus -->
+		<sl-button
+			role="button"
 			bind:this={downloadButton}
 			size="small"
 			pill
 			variant="primary"
 			onclick={async () => {
-				if (pdfObjects.length < 2) {
-					downloadButton.setAttribute('loading', '');
-					await downloadNotMerge();
-					downloadButton.removeAttribute('loading');
-				} else {
-					downloadDialog.show();
-				}
+				downloadButton.setAttribute('loading', '');
+				await downloadNotMerge();
+				downloadButton.removeAttribute('loading');
 			}}
 			>download
 			<sl-icon name="file-earmark-arrow-down"></sl-icon>
@@ -147,52 +170,6 @@
 				<sl-badge pill pulse>{pdfObjects.length}</sl-badge>
 			{/if}
 		</sl-button>
-
-		<sl-dialog bind:this={downloadDialog} label="Download">
-			<div class="flex justify-center gap-10">
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_interactive_supports_focus -->
-				<sl-button
-					role="button"
-					bind:this={downloadMerge}
-					size="large"
-					onclick={async () => {
-						if (mergedPdfName === '') {
-							downloadDialog.hide();
-							shakeAnimation.setAttribute('play', '');
-							setTimeout(() => {
-								shakeAnimation.removeAttribute('play');
-								inputMergedPdfName.focus();
-							}, 1000);
-							return;
-						}
-
-						downloadMerge.setAttribute('loading', '');
-						await mergeAndDownload();
-						downloadMerge.removeAttribute('loading');
-					}}
-				>
-					Merge
-					<br />
-					<div style="font-size: 32px;">
-						<sl-icon name="files"></sl-icon>
-						<sl-icon name="arrow-right-short"></sl-icon>
-						<sl-icon name="filetype-pdf"></sl-icon>
-					</div>
-				</sl-button>
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_interactive_supports_focus -->
-				<sl-button role="button" size="large" onclick={() => downloadNotMerge()}>
-					Not merge
-					<br />
-					<div style="font-size: 32px;">
-						<sl-icon name="filetype-pdf"></sl-icon>
-						...
-						<sl-icon name="filetype-pdf"></sl-icon>
-					</div>
-				</sl-button>
-			</div>
-		</sl-dialog>
 	</div>
 
 	<div class="flex flex-wrap items-center justify-center gap-2">

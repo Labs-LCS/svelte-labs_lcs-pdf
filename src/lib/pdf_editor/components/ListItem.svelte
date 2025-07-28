@@ -8,7 +8,8 @@
 		addSingleCover,
 		deleteSinglePdf,
 		notify,
-		savePdf
+		savePdf,
+		deletePages
 	} from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let liItem: HTMLLIElement,
@@ -24,13 +25,6 @@
 		progress: number = $state(0),
 		{ pdf, loggedIn }: { pdf: ListItemInterface; loggedIn: boolean } = $props(),
 		tag = $derived(pdf.tag);
-
-	function deletePages() {
-		const pagesToDelete = drawer.querySelector('.edit-view')!.querySelectorAll('.selected');
-		pagesToDelete.forEach((page) => {
-			page.remove();
-		});
-	}
 
 	function closeModal() {
 		drawer.hide();
@@ -124,7 +118,7 @@
 				style="padding-right: 15px;"
 				disabled={progress !== 100 ? 'true' : false}
 				onclick={() => {
-					deletePages();
+					deletePages(drawer);
 				}}>Delete</sl-button
 			>
 			<sl-button
