@@ -27,7 +27,7 @@
 </script>
 
 <div
-	class="absolute bottom-16 z-99 flex w-full flex-row justify-center gap-x-10 sm:right-4 sm:bottom-12 sm:w-fit sm:flex-col sm:gap-y-4"
+	class="absolute bottom-16 z-79 flex w-full flex-row justify-center gap-x-10 sm:right-4 sm:bottom-12 sm:w-fit sm:flex-col sm:gap-y-4"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->

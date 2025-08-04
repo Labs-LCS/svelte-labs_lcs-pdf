@@ -38,8 +38,8 @@
 	}}
 	class="flex h-screen flex-col"
 >
-	<div class="flex w-screen flex-col pt-16">
-		<div class="flex w-full flex-col items-center gap-y-4 pb-4 shadow-2xs">
+	<div class="flex w-dvw flex-col pt-16">
+		<div class="flex w-dvw flex-col items-center gap-y-4 pb-4 shadow-2xs">
 			<!-- <PremiumTools /> -->
 			<BasicTools />
 		</div>

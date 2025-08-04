@@ -1,6 +1,4 @@
-<footer
-	class="absolute bottom-0 flex w-[100vw] content-center bg-black text-center text-xs text-white"
->
+<footer class="absolute bottom-0 flex w-dvw content-center bg-black text-center text-xs text-white">
 	<sl-carousel autoplay loop>
 		<sl-carousel-item>
 			<p>

@@ -30,7 +30,7 @@
 
 			setTimeout(() => {
 				header.classList.add('h-16');
-				header.classList.remove('h-100dvh');
+				header.classList.remove('h-dvh');
 				avatar.classList.remove('opacity-0');
 				labsName.classList.remove('opacity-0');
 			}, 1500);
@@ -46,7 +46,7 @@
 
 <header
 	bind:this={header}
-	class="h-100dvh w-100dvw absolute z-99 flex items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
+	class="absolute z-99 flex h-dvh w-dvw items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
 >
 	<a href="./">
 		<p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>

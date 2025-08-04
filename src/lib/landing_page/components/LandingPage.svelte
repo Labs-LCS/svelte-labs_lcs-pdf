@@ -40,7 +40,7 @@
 	<div class="h-[48px] w-full bg-black"></div>
 	<div
 		bind:this={footer}
-		class="fixed bottom-0 flex h-0 w-[100vw] items-center justify-center bg-black text-center text-xs text-white transition-all"
+		class="fixed bottom-0 flex h-0 w-dvw items-center justify-center bg-black text-center text-xs text-white transition-all"
 	>
 		<p>
 			Lucas Campanhã dos Santos | <a
