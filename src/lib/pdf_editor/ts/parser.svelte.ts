@@ -1,38 +1,44 @@
 import { PDFDocument } from 'mupdf';
+import { notify } from './main_logic.svelte';
 
 export async function parsePdfData(file: File) {
-	const database = 'pdf_db',
-		store = 'unmodified',
-		buffer = await file.arrayBuffer(),
-		size = file.size,
-		pages = PDFDocument.openDocument(buffer, 'application/pdf').countPages(),
-		pagesArray = Array.from(Array(pages).keys()),
-		pdfId = `${Date.now() + size}`,
-		pdfName = file.name,
-		pdfThumbnail = '',
-		hasCover = false,
-		coverId = `cover-${pdfId}`,
-		coverThumbnail = '',
-		tag = 'Non edited',
-		selected = false;
+	try {
+		const database = 'pdf_db',
+			store = 'unmodified',
+			buffer = await file.arrayBuffer(),
+			size = file.size,
+			pages = PDFDocument.openDocument(buffer, 'application/pdf').countPages(),
+			pagesArray = Array.from(Array(pages).keys()),
+			pdfId = `${Date.now() + size}`,
+			pdfName = file.name,
+			pdfThumbnail = '',
+			hasCover = false,
+			coverId = `cover-${pdfId}`,
+			coverThumbnail = '',
+			tag = 'Non edited',
+			selected = false;
 
-	const pdf = {
-		database,
-		store,
-		buffer,
-		size,
-		pages,
-		pagesArray,
-		pdfId,
-		pdfName,
-		pdfThumbnail,
-		hasCover,
-		coverId,
-		coverThumbnail,
-		tag,
-		selected
-	};
-	return pdf;
+		const pdf = {
+			database,
+			store,
+			buffer,
+			size,
+			pages,
+			pagesArray,
+			pdfId,
+			pdfName,
+			pdfThumbnail,
+			hasCover,
+			coverId,
+			coverThumbnail,
+			tag,
+			selected
+		};
+		return pdf;
+	} catch {
+		notify(`Document "${file.name}" could not be opened.`, 'warning', 'exclamation-triangle', 4000);
+		return;
+	}
 }
 
 export async function parseCoverData(coverId: string, file: File) {

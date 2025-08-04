@@ -20,10 +20,9 @@
 
 	onMount(async () => {
 		Sortable.create(editView, {
-			group: 'pages-list',
-			animation: 200,
-			swapThreshold: 0.55,
-			ghostClass: 'hidden-item'
+			swapThreshold: 0.64,
+			revertOnSpill: true,
+			ghostClass: 'hidden-page'
 		});
 		const db = openDB(database);
 		const pdfObject: dbPdfObject = await (await db).get(store, id);
@@ -42,7 +41,7 @@
 
 <div
 	bind:this={editView}
-	class="edit-view flex h-full w-full flex-wrap items-center justify-center gap-2 overflow-auto rounded-xl bg-gray-100 p-4 inset-shadow-2xs"
+	class="edit-view z-89 flex h-full w-full flex-wrap items-center justify-center overflow-auto rounded-xl bg-gray-100 p-4 inset-shadow-2xs"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_interactive_supports_focus -->
@@ -78,6 +77,7 @@
 		>
 		</sl-icon-button>
 	</div>
+
 	{#each srcs as pageImgObj}
 		<PageThumbnail pageId={pageImgObj.pageId} src={pageImgObj.src} {thumbnailSize} />
 	{/each}

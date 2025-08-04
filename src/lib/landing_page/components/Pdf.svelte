@@ -3,7 +3,7 @@
 
 	function curtainCall() {
 		curtain.classList.remove('h-0');
-		curtain.classList.add('h-full');
+		curtain.classList.add('h-dvh');
 		duck.classList.remove('invisible');
 		setTimeout(() => {
 			window.open('./pdf_editor', '_self');
@@ -28,7 +28,7 @@
 	>
 		<sl-carousel
 			class=""
-			style="--aspect-ratio: 5/4;"
+			style="--aspect-ratio: 5/4; min-width: 360px;"
 			loop
 			mouse-dragging
 			navigation

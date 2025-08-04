@@ -9,7 +9,10 @@
 		deleteSinglePdf,
 		notify,
 		savePdf,
-		deletePages
+		deletePages,
+		userData,
+		removeCover
+		// compressAndSave
 	} from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let liItem: HTMLLIElement,
@@ -23,7 +26,7 @@
 		pageOrder: string[] = $state([]),
 		saveButton: SlButton,
 		progress: number = $state(0),
-		{ pdf, loggedIn }: { pdf: ListItemInterface; loggedIn: boolean } = $props(),
+		{ pdf }: { pdf: ListItemInterface } = $props(),
 		tag = $derived(pdf.tag);
 
 	function closeModal() {
@@ -49,7 +52,7 @@
 	data-size={pdf.size}
 	data-pages={pdf.pages}
 	data-selected={isSelected}
-	class="relative m-auto flex scale-0 items-center gap-0.5 p-2 transition-[scale] duration-200"
+	class="relative m-auto flex scale-0 items-center gap-0.5 p-2 pb-6 transition-[scale] duration-200"
 >
 	<sl-checkbox
 		bind:this={checkbox}
@@ -66,13 +69,13 @@
 		]}
 		bind:this={divCover}
 	>
-		<sl-tooltip content="Select cover">
+		<sl-tooltip content={pdf.coverThumbnail ? 'Change cover' : 'Select cover'}>
 			<sl-button
 				class="select-button cover-thumbnail"
 				variant="default"
 				size="medium"
 				onclick={() => {
-					if (loggedIn) {
+					if (userData.loggedIn) {
 						coverInput.click();
 					} else {
 						notify('You need to log in to perform this action.');
@@ -100,7 +103,7 @@
 
 	<div
 		class={[
-			'item-div flex h-25 flex-row items-center justify-center gap-2.5 rounded-r-full bg-gray-50 pr-6 pl-3 text-2xl shadow-sm',
+			'item-div relative flex h-25 flex-row items-center justify-center gap-2.5 rounded-r-full bg-gray-50 pr-6 pl-3 text-2xl shadow-sm',
 			{ 'shadow-sm shadow-orange-800': isSelected }
 		]}
 		bind:this={divPdf}
@@ -183,9 +186,33 @@
 			onclick={() => deleteSinglePdf(pdf.pdfId, pdf.database, pdf.store)}
 		>
 		</sl-icon-button>
+		<div
+			class={[
+				'absolute -bottom-4 h-4 w-[75%] rounded-br-full rounded-bl-full bg-black',
+				{ 'shadow-sm shadow-orange-800': isSelected },
+				'transition-all'
+			]}
+		>
+			<div
+				class="absolute top-0 flex w-full justify-between text-xs text-white transition-all not-hover:pr-3 not-hover:pl-3 hover:pr-6 hover:pl-6"
+			>
+				<button
+					class="cursor-pointer hover:text-orange-500"
+					onclick={async () => {
+						await removeCover(pdf);
+					}}>Remove cover</button
+				>
+				<button
+					class="cursor-not-allowed hover:text-orange-500"
+					onclick={() => {
+						notify('Not available', 'danger');
+					}}>Compress PDF</button
+				>
+			</div>
+		</div>
 	</div>
 
-	<div class="absolute bottom-3 left-60">
+	<div class="absolute bottom-7 left-60">
 		<sl-tag variant={tag === 'Non edited' ? 'neutral' : 'primary'} size="small" pill>{tag}</sl-tag>
 	</div>
 </li>

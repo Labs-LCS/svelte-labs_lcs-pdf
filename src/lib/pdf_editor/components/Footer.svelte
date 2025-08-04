@@ -27,7 +27,7 @@
 		--aspect-ratio: calc(100vw / 100vh);
 		row-gap: 0px;
 		column-gap: 0px;
-		max-height: 40px;
+		max-height: 65px;
 		min-width: 100vw;
 	}
 </style>

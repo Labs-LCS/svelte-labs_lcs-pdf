@@ -11,7 +11,7 @@
 	onMount(() => {
 		setTimeout(() => {
 			header.classList.add('h-[72px]');
-			header.classList.remove('h-full');
+			header.classList.remove('h-dvh');
 		}, 1000);
 
 		setTimeout(() => {
@@ -25,7 +25,7 @@
 	<div class="flex h-[72px] w-full"></div>
 	<div
 		bind:this={header}
-		class="fixed z-999 flex h-full w-full flex-row items-center justify-center gap-x-2.5 border-b border-white bg-black pt-4 pb-4 transition-all duration-300 ease-in-out lg:justify-start"
+		class="fixed z-999 flex h-dvh w-full flex-row items-center justify-center gap-x-2.5 border-b border-white bg-black pt-4 pb-4 transition-all duration-300 ease-in-out lg:justify-start"
 	>
 		<img src="/labs-lcs.png" alt="Labs.LCS logo" class="h-10 lg:pl-4" />
 		<span class="font-righteous letter text-xl">Labs.LCS - Study projects</span>

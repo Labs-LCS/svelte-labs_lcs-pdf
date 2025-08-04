@@ -28,15 +28,13 @@
 	import { pdf_db } from '$lib/pdf_editor/ts/main_logic.svelte';
 	import { onMount } from 'svelte';
 
-	let loggedIn = $state(false);
-
 	onMount(async () => {
 		await pdf_db();
 	});
 </script>
 
 <div class="relative flex h-screen w-screen flex-col bg-gray-200">
-	<Header bind:loggedIn />
-	<MainArea bind:loggedIn />
+	<Header />
+	<MainArea />
 	<Footer />
 </div>

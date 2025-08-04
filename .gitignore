@@ -9,6 +9,8 @@ bkp
 /.svelte-kit
 /build
 
+# Test components
+/src/lib/pdf_editor/components/Viewer.svelte
 
 # OS
 .DS_Store

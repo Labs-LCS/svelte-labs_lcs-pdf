@@ -6,17 +6,9 @@
 	import { addPdf, pdfObjects } from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	let listArea: HTMLUListElement,
-		dragoverHint: boolean = $state(false),
-		{ loggedIn = $bindable() } = $props();
+		dragoverHint: boolean = $state(false);
 
 	onMount(() => {
-		window.addEventListener('unhandledrejection', (event) => {
-			console.warn('Unhandled promise rejection:', event.reason);
-		});
-		window.addEventListener('error', (event) => {
-			console.warn('Global JS error:', event.message, event.error);
-		});
-
 		Sortable.create(listArea, {
 			group: 'items-list',
 			animation: 200,
@@ -47,17 +39,20 @@
 	class="flex h-screen flex-col"
 >
 	<div class="flex w-screen flex-col pt-16">
-		<div class="flex w-full flex-col items-center gap-y-4 pt-4 pb-4 shadow-2xs">
+		<div class="flex w-full flex-col items-center gap-y-4 pb-4 shadow-2xs">
 			<!-- <PremiumTools /> -->
-			<BasicTools {loggedIn} />
+			<BasicTools />
 		</div>
 	</div>
 
-	<ul bind:this={listArea} class="list-area relative flex flex-col overflow-auto pt-2 pb-[10vh]">
+	<ul
+		bind:this={listArea}
+		class="list-area relative flex flex-col overflow-auto pt-2 pb-40 sm:pb-70"
+	>
 		{#if pdfObjects.length < 1}
 			<div
 				class={[
-					'absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-row gap-x-2 text-3xl select-none',
+					'absolute top-1/2 left-1/2 flex h-full -translate-x-1/2 -translate-y-1/2 flex-row gap-x-2 pt-8 text-2xl select-none sm:text-3xl',
 					{ 'text-gray-500': !dragoverHint },
 					{ 'text-orange-500': dragoverHint }
 				]}
@@ -68,7 +63,7 @@
 			</div>
 		{/if}
 		{#each pdfObjects as pdf}
-			<ListItem {pdf} {loggedIn} />
+			<ListItem {pdf} />
 		{/each}
 	</ul>
 </div>

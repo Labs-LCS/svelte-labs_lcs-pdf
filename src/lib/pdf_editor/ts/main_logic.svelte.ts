@@ -7,11 +7,80 @@ import { getDocument } from 'pdfjs-dist';
 import type { CoverItemInterface, ListItemInterface, pdfObj } from './interfaces.svelte';
 import { parsePdfData } from './parser.svelte';
 import { renderPdf } from './render.svelte';
+import { FirebaseError, initializeApp } from 'firebase/app';
+import {
+	browserLocalPersistence,
+	getAuth,
+	GoogleAuthProvider,
+	onAuthStateChanged,
+	setPersistence,
+	signInWithPopup,
+	signOut,
+	type UserCredential
+} from 'firebase/auth';
 
 // State objects
 
 export let pdfObjects: ListItemInterface[] = $state([]);
 export let coverObjects: CoverItemInterface[] = $state([]);
+export let userData = $state({ profilePicture: '', username: 'Log in', loggedIn: false });
+
+// Authentication configuration
+
+const firebaseConfig = {
+	apiKey: 'AIzaSyDRfmejb8WTxf2HS7tPZkQr-MFL4imMh3M',
+	authDomain: 'svelte-labs-pdf.firebaseapp.com',
+	projectId: 'svelte-labs-pdf',
+	storageBucket: 'svelte-labs-pdf.firebasestorage.app',
+	messagingSenderId: '386938727173',
+	appId: '1:386938727173:web:98980048eec80e4392e56c',
+	measurementId: 'G-YFBKMQ11W0'
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+export const provider = new GoogleAuthProvider();
+
+export async function monitorAuthState() {
+	onAuthStateChanged(auth, (user) => {
+		if (user) {
+			console.log('user logged in:', user?.displayName);
+			userData.profilePicture = user.photoURL || '';
+			userData.username = user.displayName || 'Quack!';
+			userData.loggedIn = true;
+		}
+	});
+}
+
+export async function handleLogin() {
+	await setPersistence(auth, browserLocalPersistence)
+		.then(() => {
+			return signInWithPopup(auth, provider);
+		})
+		.then((result: UserCredential) => {
+			userData.profilePicture = result.user.photoURL || '';
+			userData.username = result.user.displayName || 'Quack!';
+			userData.loggedIn = true;
+		})
+		.catch((error: FirebaseError) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+			if (error.customData?.email) {
+				const email = error.customData?.email;
+				const credential = GoogleAuthProvider.credentialFromError(error);
+				console.error(errorCode, errorMessage, email, credential);
+			} else {
+				console.error(errorCode, errorMessage);
+			}
+		});
+}
+
+export async function logOut() {
+	await signOut(auth);
+	userData.loggedIn = false;
+	userData.profilePicture = '';
+	userData.username = 'Log in';
+}
 
 /**
  * @function escapeHTML
@@ -135,11 +204,13 @@ export async function addPdf(files: FileList | undefined | null) {
 		for (const file of filesArray) {
 			if (file.type === 'application/pdf') {
 				const pdf = await parsePdfData(file);
-				await storeFile(pdf);
-				const pdfDoc = await getDocument({ data: pdf.buffer }).promise;
-				pdf.pdfThumbnail = await renderPdf(pdfDoc, 1);
-				pdfDoc.destroy();
-				pdfObjects.push(pdf);
+				if (pdf) {
+					await storeFile(pdf);
+					const pdfDoc = await getDocument({ data: pdf.buffer }).promise;
+					pdf.pdfThumbnail = await renderPdf(pdfDoc, 1);
+					pdfDoc.destroy();
+					pdfObjects.push(pdf);
+				}
 			} else {
 				notify(`The file ${file.name} is not a PDF.`, 'warning', 'exclamation-triangle', 4000);
 			}
@@ -461,25 +532,44 @@ export async function addMultipleCovers(e: { currentTarget: EventTarget & HTMLIn
 	}
 }
 
+export async function compressAndSave(pdf: ListItemInterface) {
+	const db = await openDB(pdf.database);
+	const pdfObj: pdfObj = await db.get(pdf.store, pdf.pdfId);
+	const buffer = pdfObj.buffer;
+	let currentPdf = PDFDocument.openDocument(buffer) as PDFDocument;
+	currentPdf.saveToBuffer('garbage=2,compress=yes').asUint8Array();
+	await db.put(pdf.store, pdfObj);
+	pdf.size = pdfObj.buffer.byteLength;
+}
+
 /**
  * @function removeCover
  * @description Removes covers from selected PDF items and resets thumbnails to default
  * @returns {Promise<void>} Promise that resolves when all covers are removed
  */
-export async function removeCover() {
-	const selectedItems = getSelected();
-	if (selectedItems) {
-		const db = await openDB('pdf_db');
-		for (let i = 0; i < selectedItems.length; i++) {
-			const index = pdfObjects.findIndex(
-				(pdf: { pdfId: string }) => pdf.pdfId === selectedItems[i].id
-			);
-			pdfObjects[index].coverThumbnail = '';
-			const thumbnail = selectedItems[i].querySelector('.cover-thumbnail')!.querySelector('img')!;
-			thumbnail.src = '/assets/custom-cover.png';
-			await db.delete(selectedItems[i].getAttribute('data-store')!, `cover-${selectedItems[i].id}`);
+export async function removeCover(thisPdf?: ListItemInterface) {
+	const db = await openDB('pdf_db');
+	if (thisPdf) {
+		const index = pdfObjects.findIndex((pdf) => pdf.pdfId === thisPdf.pdfId);
+		pdfObjects[index].coverThumbnail = '/assets/custom-cover.png';
+		await db.delete(thisPdf.store, `cover-${thisPdf.pdfId}`);
+	} else {
+		const selectedItems = getSelected();
+		if (selectedItems) {
+			for (let i = 0; i < selectedItems.length; i++) {
+				const index = pdfObjects.findIndex(
+					(pdf: { pdfId: string }) => pdf.pdfId === selectedItems[i].id
+				);
+				pdfObjects[index].coverThumbnail = '';
+				const thumbnail = selectedItems[i].querySelector('.cover-thumbnail')!.querySelector('img')!;
+				thumbnail.src = '/assets/custom-cover.png';
+				await db.delete(
+					selectedItems[i].getAttribute('data-store')!,
+					`cover-${selectedItems[i].id}`
+				);
+			}
+			db.close();
 		}
-		db.close();
 	}
 }
 

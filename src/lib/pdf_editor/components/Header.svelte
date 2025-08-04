@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { initializeApp } from 'firebase/app';
-	import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+	import { handleLogin, logOut, monitorAuthState, notify, userData } from '../ts/main_logic.svelte';
+	import type { SlDialog } from '@shoelace-style/shoelace';
 
 	let header: HTMLElement,
 		labsName: HTMLParagraphElement,
 		animation: HTMLElement,
 		duck: HTMLImageElement,
 		avatar: HTMLElement,
-		{ loggedIn = $bindable() } = $props();
+		logoutDialog: SlDialog;
 
-	onMount(() => {
+	onMount(async () => {
+		await monitorAuthState();
 		navigator.serviceWorker
 			.register('/service-worker.js')
 			.then((reg) => console.log('Service Worker registered:', reg.scope))
@@ -29,7 +30,7 @@
 
 			setTimeout(() => {
 				header.classList.add('h-16');
-				header.classList.remove('h-[100vh]');
+				header.classList.remove('h-100dvh');
 				avatar.classList.remove('opacity-0');
 				labsName.classList.remove('opacity-0');
 			}, 1500);
@@ -41,27 +42,11 @@
 			}, 2200);
 		}, 0);
 	});
-
-	const firebaseConfig = {
-		apiKey: 'AIzaSyDRfmejb8WTxf2HS7tPZkQr-MFL4imMh3M',
-		authDomain: 'svelte-labs-pdf.firebaseapp.com',
-		projectId: 'svelte-labs-pdf',
-		storageBucket: 'svelte-labs-pdf.firebasestorage.app',
-		messagingSenderId: '386938727173',
-		appId: '1:386938727173:web:98980048eec80e4392e56c',
-		measurementId: 'G-YFBKMQ11W0'
-	};
-	let profilePicture = $state(''),
-		username = $state('Log in');
-
-	const app = initializeApp(firebaseConfig);
-	const auth = getAuth(app);
-	const provider = new GoogleAuthProvider();
 </script>
 
 <header
 	bind:this={header}
-	class="absolute z-5 flex h-[100vh] w-[100vw] items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
+	class="h-100dvh w-100dvw absolute z-99 flex items-center justify-between bg-black p-2 text-2xl text-white transition-all duration-700 ease-in-out select-none"
 >
 	<a href="./">
 		<p bind:this={labsName} class="opacity-0 transition-all">:Labs.LCS:</p>
@@ -74,29 +59,55 @@
 			class="pointer-events-none absolute inset-0 m-auto h-60 transition-all duration-400 select-none"
 		/></sl-animation
 	>
-	<sl-tooltip content={username}>
+	<sl-dialog bind:this={logoutDialog} no-header class="log-out-dialog">
+		Do you wish to log out?
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="flex justify-end gap-x-2" slot="footer">
+			<sl-button
+				variant="primary"
+				onclick={() => {
+					logoutDialog.hide();
+				}}
+			>
+				Stay logged in
+			</sl-button>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<sl-button
+				variant="danger"
+				onclick={() => {
+					logOut();
+					logoutDialog.hide();
+					notify('Logged out!');
+				}}
+			>
+				Log Out
+			</sl-button>
+		</div>
+	</sl-dialog>
+
+	<sl-tooltip content={userData.username}>
 		<!-- svelte-ignore a11y_interactive_supports_focus -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<sl-button
+			class="log-in-button"
 			role="button"
 			circle
-			onclick={() =>
-				signInWithPopup(auth, provider)
-					.then((result) => {
-						loggedIn = true;
-						const user = result.user;
-						profilePicture = user.photoURL || '';
-						username = user.displayName || 'Quack!';
-					})
-					.catch((error) => {
-						const errorCode = error.code;
-						const errorMessage = error.message;
-						const email = error.customData.email;
-						const credential = GoogleAuthProvider.credentialFromError(error);
-						console.error(errorCode, errorMessage, email, credential);
-					})}
+			onclick={async () => {
+				if (userData.loggedIn == true) {
+					logoutDialog.show();
+				} else {
+					handleLogin();
+				}
+			}}
 		>
-			<sl-avatar bind:this={avatar} class="opacity-0" image={profilePicture} loading="lazy">
+			<sl-avatar
+				bind:this={avatar}
+				class="opacity-0"
+				image={userData.profilePicture}
+				loading="lazy"
+			>
 			</sl-avatar>
 		</sl-button>
 	</sl-tooltip>
@@ -108,13 +119,20 @@
 		font-family: 'Righteous', system-ui;
 		letter-spacing: 1px;
 	}
-	sl-button::part(base) {
+	.log-in-button::part(base) {
 		padding: 0px;
 		border: none;
 		background-color: transparent;
 	}
-	sl-button::part(label) {
+	.log-in-button::part(label) {
 		padding: 0px;
 		background-color: transparent;
+	}
+	.log-out-dialog::part(body) {
+		background-color: black;
+		font-size: 20px;
+	}
+	.log-out-dialog::part(footer) {
+		background-color: black;
 	}
 </style>

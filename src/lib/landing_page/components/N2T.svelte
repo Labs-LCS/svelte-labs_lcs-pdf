@@ -25,7 +25,7 @@
 		<a href="https://www.nand2tetris.org/course" target="_blank">
 			<sl-carousel
 				class=""
-				style="--aspect-ratio: 5/4;"
+				style="--aspect-ratio: 5/4; min-width: 360px;"
 				loop
 				mouse-dragging
 				navigation

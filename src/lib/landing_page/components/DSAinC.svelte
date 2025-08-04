@@ -7,7 +7,7 @@
 		<a href="https://github.com/Labs-LCS/DSA_in_C" target="_blank">
 			<sl-carousel
 				class=""
-				style="--aspect-ratio: 5/4;"
+				style="--aspect-ratio: 5/4; min-width: 360px;"
 				loop
 				mouse-dragging
 				navigation
