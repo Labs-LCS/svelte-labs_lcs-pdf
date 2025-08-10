@@ -4,13 +4,14 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	optimizeDeps: {
-		exclude: ["mupdf"],
+		exclude: ['mupdf'],
 		esbuildOptions: {
-			target: "esnext", //esnext is subject to change, es2022 should work too (untested)
-		},
+			target: 'esnext' //esnext is subject to change, es2022 should work too (untested)
+		}
 	},
 	build: {
-		target: "esnext", //same
+		sourcemap: true,
+		target: 'esnext' //same
 	},
-	plugins: [sveltekit(), tailwindcss()],	
+	plugins: [sveltekit(), tailwindcss()]
 });

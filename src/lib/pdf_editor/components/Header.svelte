@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { handleLogin, logOut, monitorAuthState, notify, userData } from '../ts/main_logic.svelte';
+	// import { handleLogin, logOut, monitorAuthState, notify, userData } from '../ts/main_logic.svelte';
 	import type { SlDialog } from '@shoelace-style/shoelace';
 
 	let header: HTMLElement,
@@ -11,11 +11,11 @@
 		logoutDialog: SlDialog;
 
 	onMount(async () => {
-		await monitorAuthState();
-		navigator.serviceWorker
-			.register('/service-worker.js')
-			.then((reg) => console.log('Service Worker registered:', reg.scope))
-			.catch((err) => console.error('Service Worker registration failed:', err));
+		// await monitorAuthState();
+		// navigator.serviceWorker
+		// 	.register('/service-worker.js')
+		// 	.then((reg) => console.log('Service Worker registered:', reg.scope))
+		// 	.catch((err) => console.error('Service Worker registration failed:', err));
 		setTimeout(() => {
 			animation.setAttribute('play', '');
 
@@ -77,9 +77,9 @@
 			<sl-button
 				variant="danger"
 				onclick={() => {
-					logOut();
+					// logOut();
 					logoutDialog.hide();
-					notify('Logged out!');
+					// notify('Logged out!');
 				}}
 			>
 				Log Out
@@ -87,28 +87,9 @@
 		</div>
 	</sl-dialog>
 
-	<sl-tooltip content={userData.username}>
-		<!-- svelte-ignore a11y_interactive_supports_focus -->
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<sl-button
-			class="log-in-button"
-			role="button"
-			circle
-			onclick={async () => {
-				if (userData.loggedIn == true) {
-					logoutDialog.show();
-				} else {
-					handleLogin();
-				}
-			}}
-		>
-			<sl-avatar
-				bind:this={avatar}
-				class="opacity-0"
-				image={userData.profilePicture}
-				loading="lazy"
-			>
-			</sl-avatar>
+	<sl-tooltip content={''}>
+		<sl-button class="log-in-button" role="button" circle>
+			<sl-avatar bind:this={avatar} class="opacity-0" loading="lazy"> </sl-avatar>
 		</sl-button>
 	</sl-tooltip>
 </header>

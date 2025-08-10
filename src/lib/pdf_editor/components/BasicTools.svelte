@@ -5,12 +5,12 @@
 		deleteSelected,
 		downloadNotMerge,
 		mergeAndDownload,
-		removeCover,
+		// removeCover,
 		selectAllFn,
 		pdfObjects,
-		addPdf,
-		notify,
-		userData
+		addPdf
+		// notify
+		// userData
 	} from '$lib/pdf_editor/ts/main_logic.svelte';
 
 	import type { SlAnimation, SlButton, SlCheckbox, SlInput } from '@shoelace-style/shoelace';
@@ -106,17 +106,7 @@
 			<sl-button-group label="cover">
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_interactive_supports_focus -->
-				<sl-button
-					role="button"
-					size="small"
-					pill
-					onclick={() => {
-						if (userData.loggedIn) {
-							addCoversButton.click();
-						} else {
-							notify('You need to log in to perform this action.');
-						}
-					}}
+				<sl-button role="button" size="small" pill onclick={() => {}}
 					>add covers
 					<sl-icon name="file-earmark-plus"></sl-icon>
 				</sl-button>
@@ -133,17 +123,7 @@
 
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_interactive_supports_focus -->
-				<sl-button
-					role="button"
-					size="small"
-					pill
-					onclick={() => {
-						if (userData.loggedIn) {
-							removeCover();
-						} else {
-							notify('You need to log in to perform this action.');
-						}
-					}}
+				<sl-button role="button" size="small" pill onclick={() => {}}
 					>remove covers
 					<sl-icon name="file-earmark-minus"></sl-icon>
 				</sl-button>

@@ -10,10 +10,11 @@
 		notify,
 		savePdf,
 		deletePages,
-		userData,
+		// userData,
 		removeCover
 		// compressAndSave
 	} from '$lib/pdf_editor/ts/main_logic.svelte';
+	// import { extractText } from '../ts/backend.svelte';
 
 	let liItem: HTMLLIElement,
 		divCover: HTMLDivElement,
@@ -75,11 +76,11 @@
 				variant="default"
 				size="medium"
 				onclick={() => {
-					if (userData.loggedIn) {
-						coverInput.click();
-					} else {
-						notify('You need to log in to perform this action.');
-					}
+					// if (userData.loggedIn) {
+					// coverInput.click();
+					// } else {
+					// notify('You need to log in to perform this action.');
+					// }
 				}}
 			>
 				<img
@@ -178,7 +179,8 @@
 				<sl-format-bytes value={pdf.size}></sl-format-bytes>
 				<div>Pages: {pdf.pages}</div>
 			</div>
-			<sl-icon-button name="info-circle"> </sl-icon-button>
+			<!-- <sl-icon-button name="info-circle" onclick={async () => await extractText(pdf)}> -->
+			<!-- </sl-icon-button> -->
 		</sl-tooltip>
 		<sl-icon class="handle cursor-grab" name="arrows-move"></sl-icon>
 		<sl-icon-button
